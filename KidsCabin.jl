@@ -3,44 +3,61 @@ using DelimitedFiles
 using YAML
 using Logging
 
-kCount=200
-cabins=20
+#kCount=200
+#cabins=20
 
 # Setup Logging
 #logIo = open("KidsCabin.log", "w+")
 #logger = SimpleLogger(logIo)
 #global_logger(logger)
-LogLevel(Logging.Debug)   # Debug, Info, Warn, Error
+# LogLevel(Logging.Debug)   # Debug, Info, Warn, Error
 
 # Keep the argument dictionary
-argDict = Dict()
+#argDict = Dict()
 
 
-kPerCabin = convert(Int64,ceil(kCount/cabins))
+
 
 # some constants
-colCabin = kCount + 1   # col for cabin assignment 
-colKVote = kCount + 2   # col for kids vote for this cabin
-colCVotes = kCount + 3  # col for cabins vote for this kid
-colKNum = kCount + 4    # col for the number of this kid
+#colCabin = kCount + 1   # col for cabin assignment 
+#colKVote = kCount + 2   # col for kids vote for this cabin
+#colCVotes = kCount + 3  # col for cabins vote for this kid
+#colKNum = kCount + 4    # col for the number of this kid
 
-kPref = zeros(Int64,kCount,kCount)
+#kPref = zeros(Int64,kCount,kCount)
 
 # main runner
 function main() 
-    global kCount, cabins, kPerCabin
-    setConfig(inarg("kCount",200), inarg("cabins",20))
+    global kCount, cabins, kPerCabin, kPref
+
+    # Config file provided?
+    if (size(ARGS,1)==0)
+        # print usage
+        println("Usage: julia TestDataGen.jl configFile.yaml")
+        exit()
+    end
+
+    # Load Config
+    configFile = ARGS[1]
+    println("TestDataGen v0.01. Config File $configFile")
+    loadConfig(configFile)
     
-    readData(inarg("datafile","data-200-20-10.csv"))              # read the data
+    # read the kids preference file
     
+    readData(dFileName)             # read the data
+    
+    #=
     local kPrevChangeCount = 0
     local noChangeCount = 0
+    local totalVotes = reduce(+,kPref[:,1:kCount])
     for i=1:500
         kChangeCount = assignmentRound()
-        println("$i,$kChangeCount");
+        thisRoundVotes = reduce(+,kPref[:,colKVote])
+        happinessCoef = round(thisRoundVotes/totalVotes, digits=4)
+        println("$i,$kChangeCount,$happinessCoef");
         if (kChangeCount==kPrevChangeCount)
             noChangeCount += 1
-            if ((kChangeCount==0 && noChangeCount>=3) || noChangeCount>=10)
+            if ((kChangeCount==0 && noChangeCount>=3) || noChangeCount>=50)
                 println("No changes for $noChangeCount iterations after $i iterations.")
                 break
             end
@@ -48,43 +65,118 @@ function main()
             noChangeCount = 0
             kPrevChangeCount = kChangeCount
         end
+        #unassignUnhappyKids()
         
     end
-
-    writeAssignment(inarg("outfile","assignments-1.csv"))      # prints the assignments to a file
+    =#
+    initialRound()
+    writeAssignment(config["assingments"])      # prints the assignments to a file
+    printSummaryOfAssignments()
 end
-function setConfig(pkCount, pCabins) 
-    global kCount, cabins, kPerCabin, colCabin, colKNum, colCVotes, colKVote
 
-    kCount=pkCount
-    cabins=pCabins
+function printSummaryOfAssignments()
+    for c=1:cabins                                                                                                                                                  
+        print("$c")                                                                                                                                                  
+        for k in getKidsinCabin(c)                                                                                                                                   
+           print(",$k")                                                                                                                                              
+        end                                                                                                                                                          
+        println("")                                                                                                                                                  
+     end
+
+     local totalVotes = reduce(+,kPref[:,1:kCount])
+     local solutionVotes = reduce(+,kPref[:,colKVote])
+     local happinessCoef = round(solutionVotes/totalVotes, digits=4)
+     println("\nHappiness Coefficient: $happinessCoef")
+end
+
+
+# Initial Round. No kick outs in this Round
+function initialRound()
+    global kPref, cabins, kCount, kPerCabin
+
+    # This is initial round. Lets randomize
+    # korder = sortperm(kPref[:,colKVote])
+
+    korder = sortperm(rand(kCount))
     
-    kPerCabin = convert(Int64,ceil(kCount/cabins))
+    c = 1
+    assignedToC = 0
+    push!(korder,0)
+    takeNextCabin = true
+    kInCabin = 0
+    while (true) 
+        (size(korder,1)==0) && break;
+        
+        if (kInCabin >=kPerCabin)
+            c, kInCabin = getNextCabin()
+            
+            if (kInCabin>=kPerCabin) 
+                # done with cabins this round
+                break;
+            end
+            assignedToC = 0
+            takeNextCabin=true
+        end
 
-    # some constants
-    colCabin    = kCount + 1   # col for cabin assignment 
-    colKVote    = kCount + 2   # col for kids vote for this cabin
-    colCVotes   = kCount + 3  # col for cabins vote for this kid
-    colKNum     = kCount + 4    # col for the number of this kid
+        # take first kid
+        k = popfirst!(korder)
+        #println("K $k C $c")
+        if (k==0) # we have come a full circle
+            #println("Full circle")
+            if (assignedToC==0)
+                c, kInCabin = getNextCabin()
+                
+                if (kInCabin>=kPerCabin || size(korder,1)==0) 
+                    break;
+                end
+                takeNextCabin=true
+            end
+            assignedToC = 0
+            push!(korder,k)
+            continue
+        end
+
+        voteForCabin = kScoreForCabin(k,c)
+        # kids knows someone in this cabin
+        if (voteForCabin>0 || takeNextCabin==true)
+            #println("--  $k -> $c  : $voteForCabin")
+            assignKtoCabin(k,c);
+            assignedToC += 1
+            kInCabin += 1
+            takeNextCabin = false
+        else 
+            push!(korder,k)
+        end
+    end
+    
+    return 1
+
 end
 
-
-function writeAssignment(outFile)
-    println("Writing to file $outFile")
-    global kPref
-
-    writedlm( outFile, kPref[:,[colKNum, colCabin,colKVote,colCVotes]], ',')
-     
+# fetches the next most empty cabin
+function getNextCabin()
+    global cabins
+    cabinsKids = hcat(1:cabins,map(c-> kCountInCabin(c), 1:cabins))
+    cabinsKids = cabinsKids[sortperm(cabinsKids[:,2]),:]
+    return (cabinsKids[1,1],cabinsKids[1,2])
 end
 
-# helper functions
-kCurrentHappiness(k) = kPref[k,kCount+2]
-kCountInCabin(k) = size(kPref[(kPref[:,kCount+1] .== k),colKNum])[1]
-
-function loadSample() 
+function unassignUnhappyKids() 
+    # for each kid
     global kPref,cabins,kCount, kPerCabin
-    setConfig(500,50)
-    readData("data-k500-c20-B.csv")
+        
+    local kChangeCount = 0
+    korder = sortperm(kPref[:,colKVote])
+    for k in korder
+        for c in 1:cabins
+            lowestVotedKids = getKWithLowestVotes(c)
+            if size(lowestVotedKids,1)<=3
+                for kv in lowestVotedKids
+                    assignKtoCabin(kv[2],0)
+                end
+            end
+        end
+    end
 end
 
 # initial assignment
@@ -94,20 +186,21 @@ function assignmentRound()
     
     local kChangeCount = 0
     korder = sortperm(kPref[:,colKVote])
-    #korder = sortperm(rand(kCount))
+    #while (true)
+        
     for k in korder
         # kPref[k,kCount+2] = kScoreForCabin(k)
         # Score for each cabin by the kid
         #local cabinScores = sort( map(c->([c,kScoreForCabin(k,c),kCountInCabin(c)]),1:cabins) ,by= x-> x[2], rev=true)
         #csc = map(c->([c,kScoreForCabin(k,c),kCountInCabin(c)]),1:cabins)
-        csc = hcat(1:cabins, map(c-> (kScoreForCabin(k,c)), 1:cabins), map(c-> (kCountInCabin(k)), 1:cabins) )
+        csc = hcat(1:cabins, map(c-> (kScoreForCabin(k,c)), 1:cabins), map(c-> (kCountInCabin(c)), 1:cabins) )
         #println(csc)
-        cabinScores = csc[sortperm(100 .* csc[:,2] .- csc[:,3]),:]
+        cabinScores = csc[sortperm(100 .* csc[:,2] .- csc[:,3], rev=true),:]
         #println(cabinScores)
         #tarr[sortperm(100 .* tarr[:,1] .+ tarr[:,2]),:]
         #println("Start to examine kid $k  ",cabinScores)
         local voteForCurrentCabin = kCurrentHappiness(k);
-
+            
         for cs in eachrow(cabinScores)
             local c = cs[1]
             local voteForNewCabin = cs[2]
@@ -117,7 +210,9 @@ function assignmentRound()
             if voteForNewCabin < voteForCurrentCabin 
                 # all other cabins after this point will be rated lower
                 #println("$k is happy in $c")
-                break
+                #if (voteForNewCabin != voteForCurrentCabin) || (rand()<0.20)
+                    break
+                #end
             end
                 
         
@@ -133,23 +228,68 @@ function assignmentRound()
                 # can we kick someone out? Get the kid with the lowest cabin votes in this cabin
                 #println("Cabin $c has NO space for $k. Can we kick someone out?")
                 voteByCabin = kScoreByCabin(k,c)
-                (lowV,lowK) = getKWithLowestVotes(c)
+                lowestVotedKids = getKWithLowestVotes(c)
                 #println("Kid $lowK has score $lowV. New kid $k has score $voteByCabin")
-                if (lowV<voteByCabin) 
+                if (lowestVotedKids[1][1]<voteByCabin) 
                     # kick kid out
                     #println("Must kick $lowK out to replaced by $k")
-                    assignKtoCabin(lowK,0)
+                    for kv in lowestVotedKids
+                        assignKtoCabin(kv[2],0)
+                    end
                     assignKtoCabin(k,c)
                     kChangeCount+=1
                     break;
                 end
             end
         end
-
     end
     
     return kChangeCount
 end
+
+
+function loadConfig(configFile)
+    global kCount, cabins, kPerCabin, dFileName, argDict, chainLength,setFileName
+    global colCabin, colKNum, colCVotes, colKVote
+    global config = YAML.load_file(configFile)
+
+    kCount          = config["kCount"]
+    cabins          = config["cabins"]
+    chainLength     = config["chainLength"]
+    dFileName       = config["dataFile"]
+
+    kPerCabin       = config["kPerCabin"] 
+    if (kPerCabin < kCount/cabins) 
+        kPerCabin = convert(Int64,ceil(kCount/cabins))
+        println("Not enough cabin. Increased cabins to kPerCabin")
+    end
+    #cabins *= 3
+    # some constants
+    colCabin    = kCount + 1   # col for cabin assignment 
+    colKVote    = kCount + 2   # col for kids vote for this cabin
+    colCVotes   = kCount + 3  # col for cabins vote for this kid
+    colKNum     = kCount + 4    # col for the number of this kid
+end
+
+function writeAssignment(outFile)
+    println("Writing to file $outFile")
+    global kPref
+
+    writedlm( outFile, kPref[:,[colKNum, colCabin,colKVote,colCVotes]], ',')
+     
+end
+
+# helper functions
+kCurrentHappiness(k) = kPref[k,kCount+2]
+kCountInCabin(c) = size(kPref[(kPref[:,colCabin] .== c),colKNum])[1]
+
+function loadSample() 
+    global kPref,cabins,kCount, kPerCabin
+    setConfig(500,50)
+    readData("data-k500-c20-B.csv")
+end
+
+
 
 # identifies and returns the kids with the lowest vote count in the cabin
 function getKWithLowestVotes(cabin) 
@@ -167,7 +307,8 @@ function getKWithLowestVotes(cabin)
     end
 
     # there may be better way to pick the kid to kickout. But for now random it is ...
-    return (lowestVotedKids[rand(1:end)])
+    return lowestVotedKids;
+    #return (lowestVotedKids[rand(1:end)])
 end
 
 # A kids score in cabin as viewed by his cabin mates. 0 is unassigned
@@ -253,56 +394,20 @@ function readData1()
 
 end
 
-function inarg(key, def)
-    p = get(argDict,key,nothing)
-
-    if (p===nothing) 
-        return def
-    elseif (typeof(def)!=typeof("String"))
-        return parse(typeof(def),p)
-    else 
-        return p
-    end
-end
-
-function testData()
-    readData()
-    assignKtoCabin(1,1)
-    assignKtoCabin(3,1)
-    assignKtoCabin(4,1)
-    assignKtoCabin(5,1)
-    
-    println(kScoreByCabin(1))
-end
-# The usual addon for batch running and args
-function inarg(key, def)
-    p = get(argDict,key,nothing)
-
-    if (p===nothing) 
-        return def
-    elseif (typeof(def)!=typeof("String"))
-        return parse(typeof(def),p)
-    else 
-        return p
-    end
-end
-
-# entry point 
+# The runner 
 if abspath(PROGRAM_FILE) == @__FILE__
-    # load config 
-    println("Kids-Cabins Assignment Problem Solver v0.1")
-    global argDict = Dict()
-    map(arg-> begin
-                if !((m=match(r"(\S+)=(\S+)",arg)) === nothing)
-                    argDict[m[1]] = m[2]
-                else
-                    argDict[arg] = true
-                end
-            end,ARGS )
+    # just call main
     main()
 else 
+    # do this from repl 
+    # include("datagen.jl")
     # setup some defaults for REPL testing
-   
+    push!(ARGS,"config-k50-c5-C1.yaml")
+    configFile = ARGS[1]
+    println("TestDataGen v0.01. Config File $configFile")
+    loadConfig(configFile)
+    readData(dFileName)
+    "Loaded."
 end
 
 #end # end of module

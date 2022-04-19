@@ -11,11 +11,10 @@ argDict = Dict()
 
 # main
 function main()
-    global kCount, cabins, kPerCabin, dFileName, argDict, chainLength,setFileName, config
+    global kCount, cabins, kPerCabin, dFileName, argDict, chainLength,setFileName
 
     if (size(ARGS,1)==0)
         println("Usage: julia TestDataGen.jl configFile.yaml")
-        exit()
     end
     configFile = ARGS[1]
     println("TestDataGen v0.01. Config File $configFile")
@@ -34,79 +33,11 @@ function main()
         generateCaseAData(chainLength)
     elseif (case == "B")
         generateUnevenChainData(avgChainLength, chainLength)
-    elseif (case == "C")
-        generateUnevenChainDataCrossLink(avgChainLength, chainLength)
     else 
         println("Case $case unimplemented")
     end
 end
 
-# This is generate chains from 1 to maxChainLength
-# 1 is a loner
-# 2 is a pair
-function generateUnevenChainDataCrossLink(avg, max)
-    println("Generating Case: C - Chains with crosslinks")
-    global kCount, cabins, kPerCabin, dFileName
-
-    local sd = config["sd"]
-    # Setup a normal Distributions
-    d   = Normal(avg, sd)
-    td  = truncated(d, 1, max)
-
-    numChains = convert(Int64,ceil(kCount/chainLength))
-    maxCrossLink = convert(Int64,floor(kPerCabin/2))
-
-    # open the file
-    open(dFileName, "w") do io
-    open(setFileName, "w") do sio
-        # Generate a set of student numbers
-        local karr = sortperm(rand(kCount))
-        ka = 0
-        snum = 0
-        while ka < kCount
-            chainLength = convert(Int64,ceil(rand(td)))
-            if ka+chainLength > kCount
-                chainLength = kCount - ka
-            end
-            snum += 1
-            kt = sort(karr[ka+1:ka+chainLength])
-            #println(kt')
-            write(sio,"$snum")
-            for kti in kt
-                write(sio,",$kti")
-            end
-            write(sio,"\n")
-            dima = size(kt,1)
-            
-            if (dima==2) 
-                write(io, "$(kt[1]),$(kt[2]),5\n")
-                write(io, "$(kt[2]),$(kt[1]),5\n")
-            else
-                for i in 1:dima                                                                                                                               
-                    write(io, "$(kt[i]),$(kt[1+i%dima]),5\n")                                                                                                      
-                    write(io, "$(kt[i]),$(kt[1+ (i-2+dima)%dima]),5\n")
-                    # some cross links
-                    randKt = kt[sortperm(rand(size(kt,1)))]
-                    
-                    csCount = 0
-                    for kj in randKt
-                        if (kj != kt[i] && kj != kt[1+i%dima] && kj != kt[1+ (i-2+dima)%dima])
-                            csCount+=1
-                            write(io, "$(kt[i]),$kj,1\n")
-                            if (csCount>=maxCrossLink)
-                                break
-                            end
-                        end
-                    end
-                end
-            end    
-            ka += chainLength
-        end
-        close(sio)
-    end # of sio
-    close(io)
-    end # of io
-end  # of generateUnevenChainData
 
 # This is generate chains from 1 to maxChainLength
 # 1 is a loner
@@ -206,7 +137,16 @@ end
 
 # The runner 
 if abspath(PROGRAM_FILE) == @__FILE__
-    # just call main
+    # process arguments here
+    println("Datagenertor for kids cabins problem.")
+    global argDict = Dict()
+    map(arg-> begin
+                if !((m=match(r"(\S+)=(\S+)",arg)) === nothing)
+                    argDict[m[1]] = m[2]
+                else
+                    argDict[arg] = true
+                end
+            end,ARGS )
     main()
 else 
     # do this from repl 

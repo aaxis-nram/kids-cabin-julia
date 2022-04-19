@@ -4,23 +4,27 @@
 kCount: 50
 
 # number of cabins
-cabins: 5
+cabins: 6
+
+# max number of kids per cabin
+kPerCabin: 10
 
 # For Data Generator only
-case: B
+case: C
 chainLength: 12
-avgChainLength: 7
+avgChainLength: 5
+sd: 2.0
 
 # Preferences file
 # KID1, KID2, PREF
-dataFile: tmp/data-k50-c5-7-B.csv
+dataFile: tmp/data-k50-c5-C1.csv
 
 # output for KidsCabin and input for visualizer
 # What are the assignments
-assingments: tmp/assignment-k50-c5-7-B.csv
+assingments: tmp/assignment-k50-c5-C1.csv
 
 # The sets of kids. This is if you used a data generator
-setFile: tmp/sets-k50-c5-7-B.csv
+setFile: tmp/sets-k50-c5-C1.csv
 
 # Visualizer Settings
 
