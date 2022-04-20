@@ -12,8 +12,8 @@ kPerCabin: 10
 # For Data Generator only
 case: C
 chainLength: 12
-avgChainLength: 5
-sd: 2.0
+avgChainLength: 7
+sd: 3.0
 
 # Preferences file
 # KID1, KID2, PREF

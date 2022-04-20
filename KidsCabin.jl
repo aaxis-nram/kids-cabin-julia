@@ -43,18 +43,20 @@ function main()
     loadConfig(configFile)
     
     # read the kids preference file
-    
     readData(dFileName)             # read the data
     
-    #=
+    # Initial Round of assignments
+    initialRound()
+    println("\nHappiness Coefficient after initial Round: $(happinessCoefficient())")
+
+    
     local kPrevChangeCount = 0
     local noChangeCount = 0
     local totalVotes = reduce(+,kPref[:,1:kCount])
     for i=1:500
         kChangeCount = assignmentRound()
-        thisRoundVotes = reduce(+,kPref[:,colKVote])
-        happinessCoef = round(thisRoundVotes/totalVotes, digits=4)
-        println("$i,$kChangeCount,$happinessCoef");
+        
+        println("$i,$kChangeCount,$(happinessCoefficient())");
         if (kChangeCount==kPrevChangeCount)
             noChangeCount += 1
             if ((kChangeCount==0 && noChangeCount>=3) || noChangeCount>=50)
@@ -68,8 +70,8 @@ function main()
         #unassignUnhappyKids()
         
     end
-    =#
-    initialRound()
+    
+
     writeAssignment(config["assingments"])      # prints the assignments to a file
     printSummaryOfAssignments()
 end
@@ -83,12 +85,10 @@ function printSummaryOfAssignments()
         println("")                                                                                                                                                  
      end
 
-     local totalVotes = reduce(+,kPref[:,1:kCount])
-     local solutionVotes = reduce(+,kPref[:,colKVote])
-     local happinessCoef = round(solutionVotes/totalVotes, digits=4)
-     println("\nHappiness Coefficient: $happinessCoef")
+     println("\nHappiness Coefficient: $(happinessCoefficient())")
 end
 
+happinessCoefficient() = round( (reduce(+,kPref[:,colKVote])/reduce(+,kPref[:,1:kCount]) ), digits=4)
 
 # Initial Round. No kick outs in this Round
 function initialRound()
@@ -100,15 +100,20 @@ function initialRound()
     korder = sortperm(rand(kCount))
     
     c = 1
-    assignedToC = 0
-    push!(korder,0)
-    takeNextCabin = true
-    kInCabin = 0
+    assignedToC = 0         # Number of kids assigned in this round
+    push!(korder,0)         # Round marker
+    takeNextCabin = true    # The next kid will take the best cabin availble
+    kInCabin = 0            # How many kids in the current cabin we are filling  
+
+    kRejectCount = zeros(Int64,kCount)  # Track how many times a kid was rejected from a cabin
+
     while (true) 
-        (size(korder,1)==0) && break;
         
+        #=
         if (kInCabin >=kPerCabin)
-            c, kInCabin = getNextCabin()
+
+            # Get cabin with least kids
+           c, kInCabin = getNextCabin()
             
             if (kInCabin>=kPerCabin) 
                 # done with cabins this round
@@ -117,12 +122,17 @@ function initialRound()
             assignedToC = 0
             takeNextCabin=true
         end
+        =#
 
         # take first kid
         k = popfirst!(korder)
         #println("K $k C $c")
         if (k==0) # we have come a full circle
             #println("Full circle")
+            
+            # Done with everybody?
+            #(size(korder,1)==0) && break;
+
             if (assignedToC==0)
                 c, kInCabin = getNextCabin()
                 
@@ -130,19 +140,48 @@ function initialRound()
                     break;
                 end
                 takeNextCabin=true
+                kRejectCount = zeros(Int64,kCount)
             end
             assignedToC = 0
+            
             push!(korder,k)
             continue
         end
 
-        voteForCabin = kScoreForCabin(k,c)
+        voteForCabin = kAdjustedScoreForCabin(k,c)
         # kids knows someone in this cabin
         if (voteForCabin>0 || takeNextCabin==true)
             #println("--  $k -> $c  : $voteForCabin")
-            assignKtoCabin(k,c);
-            assignedToC += 1
-            kInCabin += 1
+            if (kInCabin<kPerCabin) # there is space
+                assignKtoCabin(k,c);
+                assignedToC += 1
+                kInCabin += 1
+            else # there is no space in this cabin
+                # Would the cabin mates like to vote someone out?
+                voteByCabin = kScoreByCabin(k,c)
+                lowestVotedKids = getKWithLowestVotes(c)
+                #println("Kid $lowK has score $lowV. New kid $k has score $voteByCabin")
+                if (lowestVotedKids[1][1]<voteByCabin) 
+                    # kick kid out
+                    
+                    #for kv in lowestVotedKids
+                    #    assignKtoCabin(kv[2],0)
+                    #end
+                    kVotedOut = lowestVotedKids[rand(1:end)][2]
+                    if (kRejectCount[kVotedOut]<3)
+                        println("Must kick out K $kVotedOut - $(kRejectCount[kVotedOut])th time out of C $c to be replaced by $k with $voteByCabin votes")
+                        #println(lowestVotedKids)
+                        assignKtoCabin(kVotedOut,0)
+                        kRejectCount[kVotedOut] += 1
+
+                        push!(korder,kVotedOut)
+                    
+                        assignKtoCabin(k,c)
+
+                        assignedToC += 1
+                    end
+                end    
+            end    
             takeNextCabin = false
         else 
             push!(korder,k)
@@ -179,27 +218,27 @@ function unassignUnhappyKids()
     end
 end
 
-# initial assignment
+
 function assignmentRound() 
     # for each kid
     global kPref,cabins,kCount, kPerCabin
     
     local kChangeCount = 0
     korder = sortperm(kPref[:,colKVote])
-    #while (true)
-        
+    
+
     for k in korder
         # kPref[k,kCount+2] = kScoreForCabin(k)
         # Score for each cabin by the kid
         #local cabinScores = sort( map(c->([c,kScoreForCabin(k,c),kCountInCabin(c)]),1:cabins) ,by= x-> x[2], rev=true)
         #csc = map(c->([c,kScoreForCabin(k,c),kCountInCabin(c)]),1:cabins)
-        csc = hcat(1:cabins, map(c-> (kScoreForCabin(k,c)), 1:cabins), map(c-> (kCountInCabin(c)), 1:cabins) )
+        csc = hcat(1:cabins, map(c-> (kAdjustedScoreForCabin(k,c)), 1:cabins), map(c-> (kCountInCabin(c)), 1:cabins) )
         #println(csc)
         cabinScores = csc[sortperm(100 .* csc[:,2] .- csc[:,3], rev=true),:]
         #println(cabinScores)
         #tarr[sortperm(100 .* tarr[:,1] .+ tarr[:,2]),:]
         #println("Start to examine kid $k  ",cabinScores)
-        local voteForCurrentCabin = kCurrentHappiness(k);
+        local voteForCurrentCabin = kCurrentHappiness(k)
             
         for cs in eachrow(cabinScores)
             local c = cs[1]
@@ -207,7 +246,7 @@ function assignmentRound()
             local kidsInCabin = cs[3]
             #println(cs);
             #println("Examining $c new vote $voteForNewCabin. Old vote was $voteForCurrentCabin")
-            if voteForNewCabin < voteForCurrentCabin 
+            if voteForNewCabin <= voteForCurrentCabin 
                 # all other cabins after this point will be rated lower
                 #println("$k is happy in $c")
                 #if (voteForNewCabin != voteForCurrentCabin) || (rand()<0.20)
@@ -218,7 +257,7 @@ function assignmentRound()
         
             # kid will be happier in this cabin
             # check with cabin
-            if (kCountInCabin(c) < kPerCabin)
+            if (kidsInCabin < kPerCabin)
                 #println("Cabin $c has space for $k. Assign")
                 # cabin is not at capacity. Assign the kid
                 assignKtoCabin(k,c);
@@ -236,6 +275,7 @@ function assignmentRound()
                     for kv in lowestVotedKids
                         assignKtoCabin(kv[2],0)
                     end
+                    #assignKtoCabin(lowestVotedKids[rand(1:end)][2],0)
                     assignKtoCabin(k,c)
                     kChangeCount+=1
                     break;
@@ -323,7 +363,7 @@ function kScoreByCabin(k, cabin= kPref[k,kCount+1])
     reduce(+,kPref[(kPref[:,kCount+1] .== cabin),k])
 end
 
-function kScoreForCabin(k, cabin= kPref[k,kCount+1])
+function kScoreForCabin(k, cabin= kPref[k,colCabin])
     global kPref, kCount
 
     if (cabin==0) 
@@ -332,6 +372,24 @@ function kScoreForCabin(k, cabin= kPref[k,kCount+1])
     
     reduce(+,kPref[k, transpose(kPref[(kPref[:,kCount+1] .== cabin),end])])
 end
+
+function kAdjustedScoreForCabin(k, c= kPref[k,colCabin])
+    global kPref, kCount, kPerCabin
+
+    if (c==0) 
+        return -2  # preference -2 if no assigned cabin
+    end
+    
+    kvotes = kPref[(kPref[:,colCabin] .== c),[colCVotes,colKNum]]
+    if (size(kvotes,1)<kPerCabin)
+        return reduce(+,kPref[k, transpose(kPref[(kPref[:,kCount+1] .== c),end])])
+    else
+        kvotes = kvotes[sortperm(kvotes[:,1]),:]
+        return reduce(+,kPref[k, transpose(kvotes[2:end,2])])
+    end
+end
+
+
 
 function assignKtoCabin(k,cabin) 
     global kPref, colCabin,colKVote, colCVotes
