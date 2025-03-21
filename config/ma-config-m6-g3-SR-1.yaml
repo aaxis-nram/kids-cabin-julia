@@ -1,0 +1,30 @@
+# Main settings
+name: Stable Roommate m6 g3
+
+# Count of members we are assigning
+members: 6
+
+# Count of groups
+groups: 3
+
+# max number of members per group. Will be overridden if we cant fit everyone
+mPerG: 2
+
+# For Data Generator only
+case: SR
+
+# Preferences file
+# Member1, Member2, PREF
+dataFile: tmp/data-k6-c3-SR-1.csv
+
+# output for Matching and input for visualizer
+# What are the assignments
+assignments: tmp/assignment-k6-c3-SR-1.csv
+
+# The sets of members. This is if you used a data generator
+setFile: tmp/sets-k6-c3-SR-1.csv
+
+# Visualizer Settings
+
+# Set file contains the intended sets
+

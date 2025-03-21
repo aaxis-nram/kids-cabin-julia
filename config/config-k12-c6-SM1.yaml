@@ -1,35 +1,29 @@
 # Main settings
-
-# A name to reference this config
-name: Crosslinked rings k500 c50 C1
+name: Stable Marriage k12 c6
 
 # Number of kids we are assigning
-kCount: 500
+kCount: 12
 
 # number of cabins
-cabins: 52
+cabins: 6
 
 # max number of kids per cabin
-kPerCabin: 10
+kPerCabin: 2
 
 # For Data Generator only
-case: C
-chainLength: 12
-avgChainLength: 8
-sd: 3.0
+case: SM
 
 # Preferences file
 # KID1, KID2, PREF
-dataFile: tmp/data-k500-c50-C1.csv
+dataFile: tmp/data-k12-c6-SM1.csv
 
 # output for KidsCabin and input for visualizer
 # What are the assignments
-assingments: tmp/assignment-k500-c50-C1.csv
+assignments: tmp/assignment-k12-c6-SM1.csv
 
 # The sets of kids. This is if you used a data generator
-setFile: tmp/sets-k500-c50-C1.csv
+setFile: tmp/sets-k12-c6-SM1.csv
 
-logFile: tmp/KC-k500-c50-C1-log.txt
 # Visualizer Settings
 
 # Set file contains the intended sets

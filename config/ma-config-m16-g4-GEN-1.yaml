@@ -1,0 +1,46 @@
+# Main settings
+name: General M16 G4
+
+# Count of members we are assigning
+members: 16
+
+# Count of groups
+groups: 4
+
+# max number of members per group. Will be overridden if we cant fit everyone
+mPerG: 4
+
+# For Data Generator only
+case: GEN
+
+# Preferences file
+# Member1, Member2, PREF
+dataFile: tmp/python-impl/data-m16-g4-GEN-1.csv
+
+# output for Matching and input for visualizer
+# What are the assignments
+assignments: tmp/assignments-g16-m4-GEN-1.csv
+
+# The sets of members. This is if you used a data generator
+#setFile: tmp/sets-k12-c6-SM1.csv
+
+# Visualizer Settings
+
+# Set file contains the intended sets
+
+## Possible solutions
+# 6.895833333333333
+# [[15, 13, 1, 7], [3, 11, 14, 8], [9, 2, 5, 6], [10, 0, 4, 12]]
+# 1 5 11 13  | 2 8 14 16  | 3 6 7 10  | 4 9 12 15  |
+
+# 6.854166666666666
+# [[2, 9, 12, 5], [11, 3, 7, 8], [10, 0, 4, 14], [1, 6, 13, 15]]
+# 1 5 11 15  | 2 7 14 16  | 3 6 10 13  | 4 8 9 12  |
+
+# 6.770833333333333
+# [[11, 3, 5, 7], [2, 14, 10, 0], [15, 1, 4, 13], [9, 8, 12, 6]]
+# 1 3 11 15  | 2 5 14 16  | 4 6 8 12  | 7 9 10 13  |
+
+# 6.875
+# [[9, 14, 2, 13], [6, 1, 15, 8], [4, 0, 12, 10], [11, 3, 7, 5]]
+# 1 5 11 13  | 2 7 9 16  | 3 10 14 15  | 4 6 8 12  |

@@ -1,0 +1,39 @@
+# Main settings
+name: Stable Marriage m12 g6
+
+# Count of members we are assigning
+members: 12
+
+# Count of groups
+groups: 6
+
+# max number of members per group. Will be overridden if we cant fit everyone
+mPerG: 2
+
+# For Data Generator only
+case: SM
+
+# Preferences file
+# Member1, Member2, PREF
+dataFile: tmp/data-k12-c6-SM1.csv
+
+# output for Matching and input for visualizer
+# What are the assignments
+assignments: tmp/assignment-m12-g6-SM-1.csv
+
+# The sets of members. This is if you used a data generator
+setFile: tmp/sets-k12-c6-SM1.csv
+
+# Visualizer Settings
+
+# Set file contains the intended sets
+
+
+
+# 1 9
+# 2 12
+# 3 8
+# 4 7
+# 5 10
+# 6 11 
+#4.582

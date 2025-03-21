@@ -1,0 +1,641 @@
+Matching v0.03. Running config Stable Marriage m12 g6
+member count is 12
+assignments = [9 5; 4 7; 12 1; 3 8; 11 6; 2 10]
+memberGroups = [[3, 2], [6, 1], [4, 1], [2, 1], [1, 2], [5, 2], [2, 2], [4, 2], [1, 1], [6, 2], [5, 1], [3, 1]]
+---- BEFORE Switching 9 10
+gScore = Float16(2.75)
+g2Score = Float16(1.5)
+gScoreWithM2 = Float16(2.5)
+g2ScoreWithM = Float16(2.0)
+ 1:    1  12
+ 2:    2  10
+ 3:    3   8
+ 4:    4   7
+ 5:    5   9
+ 6:    6  11
+Score: Count 12 Score 54.0
+4.5
+gc = [1, 1]
+gc2 = [6, 2]
+---- AFTER 
+assignments = [10 9; 4 7; 1 12; 3 8; 6 11; 2 9]
+ 1:    1  12
+ 2:    2   9
+ 3:    3   8
+ 4:    4   7
+ 5:    6  11
+ 6:    9  10
+Score: Count 12 Score 35.0
+2.916
+---- BEFORE Switching 4 5
+gScore = Float16(2.25)
+g2Score = Float16(-2.5)
+gScoreWithM2 = Float16(1.75)
+g2ScoreWithM = Float16(0.0)
+ 1:    1  12
+ 2:    2   9
+ 3:    3   8
+ 4:    4   7
+ 5:    6  11
+ 6:    9  10
+Score: Count 12 Score 35.0
+2.916
+gc = [2, 1]
+gc2 = [1, 2]
+---- AFTER 
+assignments = [9 4; 5 7; 1 12; 3 8; 6 11; 2 9]
+ 1:    1  12
+ 2:    2   9
+ 3:    3   8
+ 4:    4   9
+ 5:    5   7
+ 6:    6  11
+Score: Count 12 Score 49.0
+4.082
+---- BEFORE Switching 11 7
+gScore = Float16(2.5)
+g2Score = Float16(1.75)
+gScoreWithM2 = Float16(2.5)
+g2ScoreWithM = Float16(2.5)
+ 1:    1  12
+ 2:    2   9
+ 3:    3   8
+ 4:    4   9
+ 5:    5   7
+ 6:    6  11
+Score: Count 12 Score 49.0
+4.082
+gc = [5, 1]
+gc2 = [2, 2]
+---- AFTER 
+assignments = [4 9; 5 11; 1 12; 3 8; 7 11; 2 9]
+ 1:    1  12
+ 2:    2   9
+ 3:    3   8
+ 4:    4   9
+ 5:    5  11
+ 6:    7  11
+Score: Count 12 Score 32.0
+2.666
+---- BEFORE Switching 2 6
+gScore = Float16(2.0)
+g2Score = Float16(-2.5)
+gScoreWithM2 = Float16(0.75)
+g2ScoreWithM = Float16(0.0)
+ 1:    1  12
+ 2:    2   9
+ 3:    3   8
+ 4:    4   9
+ 5:    5  11
+ 6:    7  11
+Score: Count 12 Score 32.0
+2.666
+gc = [6, 1]
+gc2 = [5, 2]
+---- AFTER 
+assignments = [4 9; 5 11; 1 12; 3 8; 7 2; 6 9]
+ 1:    1  12
+ 2:    2   7
+ 3:    3   8
+ 4:    4   9
+ 5:    5  11
+ 6:    6   9
+Score: Count 12 Score 40.0
+3.334
+---- BEFORE Switching 5 4
+gScore = Float16(2.5)
+g2Score = Float16(1.5)
+gScoreWithM2 = Float16(1.75)
+g2ScoreWithM = Float16(2.75)
+ 1:    1  12
+ 2:    2   7
+ 3:    3   8
+ 4:    4   9
+ 5:    5  11
+ 6:    6   9
+Score: Count 12 Score 40.0
+3.334
+gc = [2, 1]
+gc2 = [1, 2]
+---- AFTER 
+assignments = [4 5; 4 11; 1 12; 3 8; 2 7; 6 9]
+ 1:    1  12
+ 2:    2   7
+ 3:    3   8
+ 4:    4   5
+ 5:    4  11
+ 6:    6   9
+Score: Count 12 Score 21.0
+1.75
+---- BEFORE Switching 5 2
+gScore = Float16(-2.5)
+g2Score = Float16(0.75)
+gScoreWithM2 = Float16(-2.5)
+g2ScoreWithM = Float16(1.75)
+ 1:    1  12
+ 2:    2   7
+ 3:    3   8
+ 4:    4   5
+ 5:    4  11
+ 6:    6   9
+Score: Count 12 Score 21.0
+1.75
+gc = [1, 2]
+gc2 = [5, 2]
+---- AFTER 
+assignments = [4 2; 4 11; 1 12; 3 8; 2 5; 6 9]
+ 1:    1  12
+ 2:    2   4
+ 3:    2   5
+ 4:    3   8
+ 5:    4  11
+ 6:    6   9
+Score: Count 12 Score 8.0
+0.6665
+---- BEFORE Switching 5 6
+gScore = Float16(-2.5)
+g2Score = Float16(0.75)
+gScoreWithM2 = Float16(-2.5)
+g2ScoreWithM = Float16(2.75)
+ 1:    1  12
+ 2:    2   4
+ 3:    2   5
+ 4:    3   8
+ 5:    4  11
+ 6:    6   9
+Score: Count 12 Score 8.0
+0.6665
+gc = [5, 2]
+gc2 = [6, 1]
+---- AFTER 
+assignments = [2 4; 4 11; 1 12; 3 8; 2 6; 5 9]
+ 1:    1  12
+ 2:    2   4
+ 3:    2   6
+ 4:    3   8
+ 5:    4  11
+ 6:    5   9
+Score: Count 12 Score 16.0
+1.333
+---- BEFORE Switching 7 9
+gScore = Float16(-2.5)
+g2Score = Float16(2.75)
+gScoreWithM2 = Float16(0.1111)
+g2ScoreWithM = Float16(1.75)
+ 1:    1  12
+ 2:    2   4
+ 3:    2   6
+ 4:    3   8
+ 5:    4  11
+ 6:    5   9
+Score: Count 12 Score 16.0
+1.333
+gc = [5, 1]
+gc2 = [6, 2]
+---- AFTER 
+assignments = [2 4; 4 11; 1 12; 3 8; 9 6; 5 7]
+ 1:    1  12
+ 2:    2   4
+ 3:    3   8
+ 4:    4  11
+ 5:    5   7
+ 6:    6   9
+Score: Count 12 Score 25.0
+2.084
+---- BEFORE Switching 7 11
+gScore = Float16(1.75)
+g2Score = Float16(1.75)
+gScoreWithM2 = Float16(2.5)
+g2ScoreWithM = Float16(2.25)
+ 1:    1  12
+ 2:    2   4
+ 3:    3   8
+ 4:    4  11
+ 5:    5   7
+ 6:    6   9
+Score: Count 12 Score 25.0
+2.084
+gc = [6, 2]
+gc2 = [2, 2]
+---- AFTER 
+assignments = [2 4; 4 7; 1 12; 3 8; 6 9; 5 11]
+ 1:    1  12
+ 2:    2   4
+ 3:    3   8
+ 4:    4   7
+ 5:    5  11
+ 6:    6   9
+Score: Count 12 Score 30.0
+2.5
+---- BEFORE Switching 7 10
+gScore = Float16(2.25)
+g2Score = Float16(-2.5)
+gScoreWithM2 = Float16(1.0)
+g2ScoreWithM = Float16(0.2222)
+ 1:    1  12
+ 2:    2   4
+ 3:    3   8
+ 4:    4   7
+ 5:    5  11
+ 6:    6   9
+Score: Count 12 Score 30.0
+2.5
+gc = [2, 2]
+gc2 = [1, 1]
+---- AFTER 
+assignments = [7 4; 4 10; 1 12; 3 8; 6 9; 5 11]
+ 1:    1  12
+ 2:    3   8
+ 3:    4   7
+ 4:    4  10
+ 5:    5  11
+ 6:    6   9
+Score: Count 12 Score 44.0
+3.666
+---- BEFORE Switching 1 6
+gScore = Float16(1.75)
+g2Score = Float16(0.75)
+gScoreWithM2 = Float16(1.25)
+g2ScoreWithM = Float16(1.5)
+ 1:    1  12
+ 2:    3   8
+ 3:    4   7
+ 4:    4  10
+ 5:    5  11
+ 6:    6   9
+Score: Count 12 Score 44.0
+3.666
+gc = [3, 2]
+gc2 = [5, 2]
+---- AFTER 
+assignments = [4 7; 4 10; 1 6; 3 8; 6 1; 5 11]
+ 1:    1   6
+ 2:    1   6
+ 3:    3   8
+ 4:    4   7
+ 5:    4  10
+ 6:    5  11
+Score: Count 12 Score 14.0
+1.167
+---- BEFORE Switching 8 9
+gScore = Float16(2.75)
+g2Score = Float16(-2.5)
+gScoreWithM2 = Float16(1.5)
+g2ScoreWithM = Float16(0.778)
+ 1:    1   6
+ 2:    1   6
+ 3:    3   8
+ 4:    4   7
+ 5:    4  10
+ 6:    5  11
+Score: Count 12 Score 14.0
+1.167
+gc = [4, 2]
+gc2 = [5, 1]
+---- AFTER 
+assignments = [4 7; 4 10; 1 6; 3 9; 8 6; 5 11]
+ 1:    1   6
+ 2:    3   9
+ 3:    4   7
+ 4:    4  10
+ 5:    5  11
+ 6:    6   8
+Score: Count 12 Score 29.0
+2.416
+---- BEFORE Switching 8 12
+gScore = Float16(2.5)
+g2Score = Float16(-2.5)
+gScoreWithM2 = Float16(1.25)
+g2ScoreWithM = Float16(0.778)
+ 1:    1   6
+ 2:    3   9
+ 3:    4   7
+ 4:    4  10
+ 5:    5  11
+ 6:    6   8
+Score: Count 12 Score 29.0
+2.416
+gc = [5, 1]
+gc2 = [3, 1]
+---- AFTER 
+assignments = [4 7; 4 10; 8 6; 3 9; 12 8; 5 11]
+ 1:    3   9
+ 2:    4   7
+ 3:    4  10
+ 4:    5  11
+ 5:    6   8
+ 6:    8  12
+Score: Count 12 Score 29.0
+2.416
+---- BEFORE Switching 6 1
+gScore = Float16(2.5)
+g2Score = Float16(-2.5)
+gScoreWithM2 = Float16(1.75)
+g2ScoreWithM = Float16(0.5557)
+ 1:    3   9
+ 2:    4   7
+ 3:    4  10
+ 4:    5  11
+ 5:    6   8
+ 6:    8  12
+Score: Count 12 Score 29.0
+2.416
+gc = [3, 2]
+gc2 = [5, 2]
+---- AFTER 
+assignments = [4 7; 4 10; 6 1; 3 9; 8 6; 5 11]
+ 1:    1   6
+ 2:    3   9
+ 3:    4   7
+ 4:    4  10
+ 5:    5  11
+ 6:    6   8
+Score: Count 12 Score 29.0
+2.416
+---- BEFORE Switching 10 9
+gScore = Float16(1.0)
+g2Score = Float16(1.5)
+gScoreWithM2 = Float16(1.5)
+g2ScoreWithM = Float16(1.75)
+ 1:    1   6
+ 2:    3   9
+ 3:    4   7
+ 4:    4  10
+ 5:    5  11
+ 6:    6   8
+Score: Count 12 Score 29.0
+2.416
+gc = [2, 2]
+gc2 = [4, 2]
+---- AFTER 
+assignments = [4 7; 4 9; 1 6; 3 10; 6 8; 5 11]
+ 1:    1   6
+ 2:    3  10
+ 3:    4   7
+ 4:    4   9
+ 5:    5  11
+ 6:    6   8
+Score: Count 12 Score 32.0
+2.666
+---- BEFORE Switching 10 8
+gScore = Float16(1.75)
+g2Score = Float16(-2.5)
+gScoreWithM2 = Float16(2.75)
+g2ScoreWithM = Float16(-0.5557)
+ 1:    1   6
+ 2:    3  10
+ 3:    4   7
+ 4:    4   9
+ 5:    5  11
+ 6:    6   8
+Score: Count 12 Score 32.0
+2.666
+gc = [4, 2]
+gc2 = [3, 1]
+---- AFTER 
+assignments = [4 7; 4 9; 10 6; 3 8; 6 8; 5 11]
+ 1:    3   8
+ 2:    4   7
+ 3:    4   9
+ 4:    5  11
+ 5:    6  10
+ 6:    6   8
+Score: Count 12 Score 48.0
+4.0
+Cycle count: 1 Switches = 16
+---- BEFORE Switching 9 11
+gScore = Float16(1.5)
+g2Score = Float16(2.5)
+gScoreWithM2 = Float16(1.75)
+g2ScoreWithM = Float16(2.75)
+ 1:    3   8
+ 2:    4   7
+ 3:    4   9
+ 4:    5  11
+ 5:    6  10
+ 6:    6   8
+Score: Count 12 Score 48.0
+4.0
+gc = [2, 2]
+gc2 = [6, 2]
+---- AFTER 
+assignments = [4 7; 4 11; 6 10; 3 8; 6 8; 5 9]
+ 1:    3   8
+ 2:    4   7
+ 3:    4  11
+ 4:    5   9
+ 5:    6  10
+ 6:    6   8
+Score: Count 12 Score 50.0
+4.168
+---- BEFORE Switching 4 6
+gScore = Float16(1.75)
+g2Score = Float16(2.5)
+gScoreWithM2 = Float16(2.5)
+g2ScoreWithM = Float16(2.25)
+ 1:    3   8
+ 2:    4   7
+ 3:    4  11
+ 4:    5   9
+ 5:    6  10
+ 6:    6   8
+Score: Count 12 Score 50.0
+4.168
+gc = [2, 1]
+gc2 = [5, 2]
+---- AFTER 
+assignments = [4 7; 6 11; 6 10; 3 8; 6 4; 5 9]
+ 1:    3   8
+ 2:    4   7
+ 3:    4   6
+ 4:    5   9
+ 5:    6  11
+ 6:    6  10
+Score: Count 12 Score 33.0
+2.75
+---- BEFORE Switching 12 9
+gScore = Float16(-2.5)
+g2Score = Float16(2.75)
+gScoreWithM2 = Float16(-0.1111)
+g2ScoreWithM = Float16(1.75)
+ 1:    3   8
+ 2:    4   7
+ 3:    4   6
+ 4:    5   9
+ 5:    6  11
+ 6:    6  10
+Score: Count 12 Score 33.0
+2.75
+gc = [5, 1]
+gc2 = [6, 2]
+---- AFTER 
+assignments = [4 7; 6 11; 6 10; 3 8; 9 6; 5 12]
+ 1:    3   8
+ 2:    4   7
+ 3:    5  12
+ 4:    6  11
+ 5:    6  10
+ 6:    6   9
+Score: Count 12 Score 42.0
+3.5
+---- BEFORE Switching 12 10
+gScore = Float16(1.75)
+g2Score = Float16(0.5)
+gScoreWithM2 = Float16(2.5)
+g2ScoreWithM = Float16(1.25)
+ 1:    3   8
+ 2:    4   7
+ 3:    5  12
+ 4:    6  11
+ 5:    6  10
+ 6:    6   9
+Score: Count 12 Score 42.0
+3.5
+gc = [6, 2]
+gc2 = [3, 1]
+---- AFTER 
+assignments = [4 7; 6 11; 12 10; 3 8; 6 9; 5 10]
+ 1:    3   8
+ 2:    4   7
+ 3:    5  10
+ 4:    6  11
+ 5:    6   9
+ 6:   10  12
+Score: Count 12 Score 33.0
+2.75
+---- BEFORE Switching 3 1
+gScore = Float16(2.75)
+g2Score = Float16(-2.5)
+gScoreWithM2 = Float16(1.75)
+g2ScoreWithM = Float16(0.3333)
+ 1:    3   8
+ 2:    4   7
+ 3:    5  10
+ 4:    6  11
+ 5:    6   9
+ 6:   10  12
+Score: Count 12 Score 33.0
+2.75
+gc = [4, 1]
+gc2 = [3, 2]
+---- AFTER 
+assignments = [4 7; 6 11; 10 3; 1 8; 6 9; 5 10]
+ 1:    1   8
+ 2:    3  10
+ 3:    4   7
+ 4:    5  10
+ 5:    6  11
+ 6:    6   9
+Score: Count 12 Score 46.0
+3.834
+---- BEFORE Switching 11 8
+gScore = Float16(2.5)
+g2Score = Float16(1.75)
+gScoreWithM2 = Float16(2.5)
+g2ScoreWithM = Float16(2.0)
+ 1:    1   8
+ 2:    3  10
+ 3:    4   7
+ 4:    5  10
+ 5:    6  11
+ 6:    6   9
+Score: Count 12 Score 46.0
+3.834
+gc = [2, 2]
+gc2 = [4, 2]
+---- AFTER 
+assignments = [4 7; 6 8; 3 10; 1 11; 6 9; 5 10]
+ 1:    1  11
+ 2:    3  10
+ 3:    4   7
+ 4:    5  10
+ 5:    6   8
+ 6:    6   9
+Score: Count 12 Score 47.0
+3.916
+---- BEFORE Switching 7 9
+gScore = Float16(2.25)
+g2Score = Float16(0.75)
+gScoreWithM2 = Float16(1.5)
+g2ScoreWithM = Float16(2.5)
+ 1:    1  11
+ 2:    3  10
+ 3:    4   7
+ 4:    5  10
+ 5:    6   8
+ 6:    6   9
+Score: Count 12 Score 47.0
+3.916
+gc = [1, 1]
+gc2 = [5, 1]
+---- AFTER 
+assignments = [9 7; 6 8; 3 10; 1 11; 7 9; 5 10]
+ 1:    1  11
+ 2:    3  10
+ 3:    5  10
+ 4:    6   8
+ 5:    7   9
+ 6:    7   9
+Score: Count 12 Score 15.0
+1.25
+---- BEFORE Switching 7 2
+gScore = Float16(-2.5)
+g2Score = Float16(-2.5)
+gScoreWithM2 = Float16(2.0)
+g2ScoreWithM = Float16(-2.223)
+ 1:    1  11
+ 2:    3  10
+ 3:    5  10
+ 4:    6   8
+ 5:    7   9
+ 6:    7   9
+Score: Count 12 Score 15.0
+1.25
+gc = [5, 1]
+gc2 = [1, 2]
+---- AFTER 
+assignments = [7 7; 6 8; 3 10; 1 11; 2 9; 5 10]
+ 1:    1  11
+ 2:    2   9
+ 3:    3  10
+ 4:    5  10
+ 5:    6   8
+ 6:    7   7
+Score: Count 10 Score 43.0
+4.3
+Cycle count: 2 Switches = 8
+---- BEFORE Switching 9 4
+gScore = Float16(0.0)
+g2Score = Float16(2.0)
+gScoreWithM2 = Float16(2.0)
+g2ScoreWithM = Float16(1.777)
+ 1:    1  11
+ 2:    2   9
+ 3:    3  10
+ 4:    5  10
+ 5:    6   8
+ 6:    7   7
+Score: Count 10 Score 43.0
+4.3
+gc = [1, 1]
+gc2 = [5, 2]
+---- AFTER 
+assignments = [4 7; 6 8; 3 10; 1 11; 2 9; 5 10]
+ 1:    1  11
+ 2:    2   9
+ 3:    3  10
+ 4:    4   7
+ 5:    5  10
+ 6:    6   8
+Score: Count 12 Score 52.0
+4.332
+Cycle count: 3 Switches = 1
+Cycle count: 4 Switches = 0
+ 1:    1  11
+ 2:    2   9
+ 3:    3  10
+ 4:    4   7
+ 5:    5  10
+ 6:    6   8
+Score: Count 12 Score 52.0
+4.332

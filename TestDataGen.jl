@@ -20,26 +20,94 @@ function main()
     configFile = ARGS[1]
     println("TestDataGen v0.01. Config File $configFile")
     config = YAML.load_file(configFile)
+    case            = config["case"]
 
+    #=
     kCount          = config["kCount"]
     cabins          = config["cabins"]
     chainLength     = config["chainLength"]
     avgChainLength  = config["avgChainLength"]
-    case            = config["case"]
     dFileName       = config["dataFile"]
     setFileName     = config["setFile"]
     kPerCabin    = convert(Int64,ceil(kCount/cabins))
-    
+    =#
+
     if (case == "A") 
         generateCaseAData(chainLength)
     elseif (case == "B")
         generateUnevenChainData(avgChainLength, chainLength)
     elseif (case == "C")
         generateUnevenChainDataCrossLink(avgChainLength, chainLength)
+    elseif (case == "SM")
+        generateStableMatch()
     else 
         println("Case $case unimplemented")
     end
 end
+
+function generateStableMatch()
+    # count of members
+    kCount = config["kCount"]
+    cabins = config["cabins"]
+    kPerCabin       = config["kPerCabin"]
+    
+    if (kCount/2!=cabins || kPerCabin!=2)
+        println("Stable Match requires cabins be equal to half of member.")
+        exit(1)
+    end
+
+    dFileName       = config["dataFile"]
+    setFileName     = config["setFile"]
+    allPrefs = []
+
+    open(dFileName, "w") do io
+        # 1-kCount/2 are male and kCount/2+1 thru kCount are females
+        setPoint = convert(Int64,kCount/2)
+
+        # M Side
+        for k=1:setPoint
+            pref = setPoint .+ sortperm(rand(setPoint))
+            push!(allPrefs, pref)
+            weight = setPoint
+            for kp in pref
+                write(io,"$k,$kp,$weight\n")
+                weight -= 1
+            end
+            for kp in 1:setPoint
+                kp!=k && write(io,"$k,$kp,-5\n")
+            end
+        end
+
+        # W Side
+        for k=setPoint+1:kCount
+            pref = sortperm(rand(setPoint))
+            push!(allPrefs, pref)
+            weight = setPoint
+            for kp in pref
+                write(io,"$k,$kp,$weight\n")
+                weight -= 1
+            end
+            for kp in setPoint+1:kCount
+                kp!=k && write(io,"$k,$kp,-5\n")
+            end
+        end
+    end
+    
+    open(setFileName, "w") do sio
+        write(sio,"For Python\n")
+        for pref in allPrefs        
+            write(sio, "[" * join(pref .- 1,",") * "],\n") 
+        end
+        write(sio, "\nFor Julia\n" )
+        for pref in allPrefs
+            write(sio, "[" * join(pref,",") * "],\n") 
+        end
+    end
+
+    
+end
+
+
 
 # This is generate chains from 1 to maxChainLength
 # 1 is a loner
